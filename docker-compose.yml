@@ -1,12 +1,18 @@
 ---
 services:
   umami:
-    image: ghcr.io/umami-software/umami:latest
+    image: bac/umami:latest 
+    build:
+      context: .          # cloned repo root
+      dockerfile: Dockerfile
+      args:
+        BASE_PATH: ${UMAMI_BASE_PATH}
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://umami:umami@db:5432/umami
-      APP_SECRET: replace-me-with-a-random-string
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@db:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET}
+      BASE_PATH: ${UMAMI_BASE_PATH}
     depends_on:
       db:
         condition: service_healthy
@@ -22,7 +28,7 @@ services:
     environment:
       POSTGRES_DB: umami
       POSTGRES_USER: umami
-      POSTGRES_PASSWORD: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD}
     volumes:
       - umami-db-data:/var/lib/postgresql/data
     restart: always
