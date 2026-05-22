@@ -1,3 +1,4 @@
+autoInstallPeers: true
 packages:
   - '**'
 ignoredBuiltDependencies:
@@ -7,8 +8,8 @@ ignoredBuiltDependencies:
 onlyBuiltDependencies:
   - '@prisma/client'
   - '@prisma/engines'
-  - prisma
+  - 'prisma'
 allowBuilds:
-  # '@prisma/client': true
+  '@prisma/client': false
   '@prisma/engines': true
-  # prisma: true
+  'prisma': false
