@@ -1,3 +1,29 @@
+ARG NODE_IMAGE_VERSION="22-alpine"
+
+# Install dependencies only when needed
+FROM node:${NODE_IMAGE_VERSION} AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile
+
+# Rebuild the source code only when needed
+FROM node:${NODE_IMAGE_VERSION} AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+COPY docker/proxy.ts ./src
+
+ARG BASE_PATH
+
+ENV BASE_PATH=$BASE_PATH
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/dummy"
+
+RUN npm run build-docker
+
+# Production image, copy all the files and run next
 FROM node:${NODE_IMAGE_VERSION} AS runner
 WORKDIR /app
 
@@ -20,7 +46,6 @@ COPY --from=builder /app/generated ./generated
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# npm installs flat — no symlinks, no build script restrictions
 RUN npm install npm-run-all dotenv chalk semver \
     prisma@${PRISMA_VERSION} \
     @prisma/client@${PRISMA_VERSION} \
@@ -30,6 +55,7 @@ RUN npm install npm-run-all dotenv chalk semver \
 USER nextjs
 
 EXPOSE 3000
+
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
