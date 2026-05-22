@@ -47,7 +47,7 @@ RUN set -x \
 #     @prisma/client@${PRISMA_VERSION} \
 #     @prisma/adapter-pg@${PRISMA_VERSION}
 
-RUN echo "allow-build=@prisma/engines,prisma,@prisma/client" >> /app/.npmrc && \
+RUN echo "allow-build=@prisma/engines" >> /app/.npmrc && \
     pnpm add npm-run-all dotenv chalk semver \
     prisma@${PRISMA_VERSION} \
     @prisma/client@${PRISMA_VERSION} \
