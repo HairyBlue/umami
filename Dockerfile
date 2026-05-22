@@ -41,7 +41,8 @@ RUN set -x \
     && apk add --no-cache curl \
     && npm install -g pnpm
 
-RUN pnpm --allow-build='@prisma/engines,prisma' add npm-run-all dotenv chalk semver \
+# Script dependencies
+RUN pnpm --allow-build='@prisma/engines' add npm-run-all dotenv chalk semver \
     prisma@${PRISMA_VERSION} \
     @prisma/client@${PRISMA_VERSION} \
     @prisma/adapter-pg@${PRISMA_VERSION}
