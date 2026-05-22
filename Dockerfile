@@ -7,7 +7,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY pnpm-workspace.yaml ./
 COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10.33.4
 RUN pnpm install --frozen-lockfile
 
 # Rebuild the source code only when needed
@@ -40,7 +40,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 RUN set -x \
     && apk add --no-cache curl \
-    && npm install -g pnpm
+    && npm install -g pnpm@10.33.4
 
 # Script dependencies
 RUN pnpm add npm-run-all dotenv chalk semver \
