@@ -1,4 +1,4 @@
-ARG NODE_IMAGE_VERSION="22-alpine"
+ARG NODE_IMAGE_VERSION="24-alpine"
 
 # Install dependencies only when needed
 FROM node:${NODE_IMAGE_VERSION} AS deps
@@ -42,7 +42,6 @@ RUN set -x \
     && npm install -g pnpm
 
 # Script dependencies
-COPY --from=builder /app/package.json ./package.json
 RUN pnpm --allow-build='@prisma/engines' add npm-run-all dotenv chalk semver \
     prisma@${PRISMA_VERSION} \
     @prisma/client@${PRISMA_VERSION} \
