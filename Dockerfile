@@ -6,7 +6,7 @@ FROM node:${NODE_IMAGE_VERSION} AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm
+RUN npm install -g pnpm@9.15.9
 RUN pnpm install --frozen-lockfile
 
 # Rebuild the source code only when needed
@@ -37,27 +37,15 @@ ENV NODE_OPTIONS=$NODE_OPTIONS
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-
 RUN set -x \
-    && apk add --no-cache curl openssl \
+    && apk add --no-cache curl \
     && npm install -g pnpm
 
-RUN echo 'onlyBuiltDependencies[]=@prisma/engines' >> .npmrc && \
-    echo 'onlyBuiltDependencies[]=prisma' >> .npmrc && \
-    pnpm add npm-run-all dotenv chalk semver \
-      prisma@${PRISMA_VERSION} \
-      @prisma/client@${PRISMA_VERSION} \
-      @prisma/adapter-pg@${PRISMA_VERSION}
-      
-# RUN set -x \
-#     && apk add --no-cache curl \
-#     && npm install -g pnpm
-
 # Script dependencies
-# RUN pnpm --allow-build='@prisma/engines' add npm-run-all dotenv chalk semver \
-#     prisma@${PRISMA_VERSION} \
-#     @prisma/client@${PRISMA_VERSION} \
-#     @prisma/adapter-pg@${PRISMA_VERSION}
+RUN pnpm --allow-build='@prisma/engines' add npm-run-all dotenv chalk semver \
+    prisma@${PRISMA_VERSION} \
+    @prisma/client@${PRISMA_VERSION} \
+    @prisma/adapter-pg@${PRISMA_VERSION}
 
 # RUN pnpm add npm-run-all dotenv chalk semver \
 #     prisma@${PRISMA_VERSION} \
