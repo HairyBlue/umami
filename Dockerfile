@@ -42,7 +42,13 @@ RUN set -x \
     && npm install -g pnpm
 
 # Script dependencies
-RUN pnpm --allow-build='@prisma/engines,prisma' add npm-run-all dotenv chalk semver \
+# RUN pnpm --allow-build='@prisma/engines,prisma' add npm-run-all dotenv chalk semver \
+#     prisma@${PRISMA_VERSION} \
+#     @prisma/client@${PRISMA_VERSION} \
+#     @prisma/adapter-pg@${PRISMA_VERSION}
+
+RUN echo "allow-build=@prisma/engines,prisma" > /root/.npmrc && \
+    pnpm add npm-run-all dotenv chalk semver \
     prisma@${PRISMA_VERSION} \
     @prisma/client@${PRISMA_VERSION} \
     @prisma/adapter-pg@${PRISMA_VERSION}
