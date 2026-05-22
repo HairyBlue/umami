@@ -42,29 +42,10 @@ RUN set -x \
     && npm install -g pnpm
 
 # Script dependencies
-
-RUN node -e "const fs=require('fs'),p=JSON.parse(fs.readFileSync('package.json'));p.pnpm=Object.assign(p.pnpm||{},{onlyBuiltDependencies:['@prisma/engines','prisma']});fs.writeFileSync('package.json',JSON.stringify(p));" && \
-    pnpm add npm-run-all dotenv chalk semver \
+RUN pnpm --allow-build='@prisma/engines' add npm-run-all dotenv chalk semver \
     prisma@${PRISMA_VERSION} \
     @prisma/client@${PRISMA_VERSION} \
     @prisma/adapter-pg@${PRISMA_VERSION}
-    
-# RUN pnpm --allow-build='@prisma/engines' add npm-run-all dotenv chalk semver \
-#     prisma@${PRISMA_VERSION} \
-#     @prisma/client@${PRISMA_VERSION} \
-#     @prisma/adapter-pg@${PRISMA_VERSION}
-
-# RUN pnpm add npm-run-all dotenv chalk semver \
-#     prisma@${PRISMA_VERSION} \
-#     @prisma/client@${PRISMA_VERSION} \
-#     @prisma/adapter-pg@${PRISMA_VERSION} && \
-#     pnpm rebuild @prisma/engines prisma
-
-# RUN echo 'allow-build=@prisma/engines,prisma' >> .npmrc && \
-#     pnpm add npm-run-all dotenv chalk semver \
-#     prisma@${PRISMA_VERSION} \
-#     @prisma/client@${PRISMA_VERSION} \
-#     @prisma/adapter-pg@${PRISMA_VERSION}
 
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder /app/prisma ./prisma
