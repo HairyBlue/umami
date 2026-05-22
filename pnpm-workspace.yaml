@@ -1,6 +1,15 @@
-autoInstallPeers: true
 packages:
   - '**'
+allowBuilds:
+  '@parcel/watcher': false
+  '@prisma/client': false
+  '@prisma/engines': true
+  '@swc/core': false
+  cypress: false
+  esbuild: false
+  'prisma': false
+  sharp: false
+autoInstallPeers: true
 ignoredBuiltDependencies:
   - cypress
   - esbuild
@@ -9,7 +18,3 @@ onlyBuiltDependencies:
   - '@prisma/client'
   - '@prisma/engines'
   - 'prisma'
-allowBuilds:
-  '@prisma/client': false
-  '@prisma/engines': true
-  'prisma': false
