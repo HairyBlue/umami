@@ -37,9 +37,21 @@ ENV NODE_OPTIONS=$NODE_OPTIONS
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+
 RUN set -x \
-    && apk add --no-cache curl \
+    && apk add --no-cache curl openssl \
     && npm install -g pnpm
+
+RUN echo 'onlyBuiltDependencies[]=@prisma/engines' >> .npmrc && \
+    echo 'onlyBuiltDependencies[]=prisma' >> .npmrc && \
+    pnpm add npm-run-all dotenv chalk semver \
+      prisma@${PRISMA_VERSION} \
+      @prisma/client@${PRISMA_VERSION} \
+      @prisma/adapter-pg@${PRISMA_VERSION}
+      
+# RUN set -x \
+#     && apk add --no-cache curl \
+#     && npm install -g pnpm
 
 # Script dependencies
 # RUN pnpm --allow-build='@prisma/engines' add npm-run-all dotenv chalk semver \
@@ -53,11 +65,11 @@ RUN set -x \
 #     @prisma/adapter-pg@${PRISMA_VERSION} && \
 #     pnpm rebuild @prisma/engines prisma
 
-RUN echo 'allow-build=@prisma/engines,prisma' >> .npmrc && \
-    pnpm add npm-run-all dotenv chalk semver \
-    prisma@${PRISMA_VERSION} \
-    @prisma/client@${PRISMA_VERSION} \
-    @prisma/adapter-pg@${PRISMA_VERSION}
+# RUN echo 'allow-build=@prisma/engines,prisma' >> .npmrc && \
+#     pnpm add npm-run-all dotenv chalk semver \
+#     prisma@${PRISMA_VERSION} \
+#     @prisma/client@${PRISMA_VERSION} \
+#     @prisma/adapter-pg@${PRISMA_VERSION}
 
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder /app/prisma ./prisma
