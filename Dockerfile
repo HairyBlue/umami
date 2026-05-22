@@ -29,6 +29,8 @@ RUN npm run build-docker
 FROM node:${NODE_IMAGE_VERSION} AS runner
 WORKDIR /app
 
+COPY --from=builder /app/node_modules ./node_modules
+
 ARG PRISMA_VERSION="7.3.0"
 ARG NODE_OPTIONS
 
